@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memory-eater
+spec:
+  containers:
+  - name: app
+    image: linuxtips/memory-eater:0.3
+    # env:
+    # - name: MEMORY_MB
+    #   value: "150"
+    # - name: WORKERS
+    #   value: "1"
+    resources:
+      requests:
+        cpu: 250m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+  restartPolicy: Always

@@ -70,6 +70,11 @@ status: {}
 kubectl create namespace giropops --dry-run=client -o yaml > namespace.yaml
 ```
 
+ou criar o yaml a partir de um deployment
+```bash
+kubectl get deployment nginx-deployment -n giropops -o yaml
+```
+
 ## Criar namespaces na mão
 ```bash
 kubectl create namespace giropops

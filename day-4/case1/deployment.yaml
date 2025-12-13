@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meu-servico
+  namespace: producao
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: meu-servico
+  template:
+    metadata:
+      labels:
+        app: meu-servico
+        version: "v2-problematica"
+    spec:
+      containers:
+      - name: meu-servico-container
+        image: linuxtips/memory-eater:0.3
+        # Simulando limites muito baixos para forçar OOMKill
+        resources:
+          limits:
+            memory: "32Mi"
+        # Sem probes = Kubernetes operando às cegas
+
+
+
+        
+
+
+
+
+
+
+        value: "5"     # Demora 5s para iniciar
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "100m"
+  limits:
+    memory: "200Mi"
+    cpu: "500m"
+
+# Startup Probe – Verifica se a aplicação iniciou
+# Falha até STARTUP_DELAY segundos
+startupProbe:
+  httpGet:
+    path: /startupz
+    port: 8080
+  initialDelaySeconds: 2
+  periodSeconds: 3
+  failureThreshold: 10
+
+# Liveness Probe – Verifica se a aplicação está viva
+# Se falhar, o container é reiniciado
+livenessProbe:
+  httpGet:
+    path: /livez
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+# Readiness Probe – Verifica se está pronta para tráfego
+# Se falhar, o Pod é removido do Service
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  failureThreshold: 3
