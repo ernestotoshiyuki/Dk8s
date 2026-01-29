@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: giropops-senhas
+  annotations:
+    #nginx.ingress.kubernetes.io/limit-rps: "2"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-secret: "giropops-senhas-users"
+    nginx.ingress.kubernetes.io/auth-realm: "Autenicação necessária"
+    # nginx.ingress.kubernetes.io/affinity: "cookie"
+    # nginx.ingress.kubernetes.io/session-cookie-name: "giropops-cookie"
+    # nginx.ingress.kubernetes.io/upstream-hash-by: "$request_uri"
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"  # utilizar o cluster-issuer cert-manager
+    cert-manager.io/issuer: "letsencrypt-prod"  # utilizar o cluster-issuer cert-manager
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - app-127.0.0.1.nip.io # quero utilizar TLS para esse host/dns
+    secretName: giropops-nip-io-tls # nome do segredo onde o cert-manager vai criar e salvar o certificado TLS
+  rules:
+    - host: app-127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: 
+                name: giropops-senhas
+                port:
+                  number: 5000

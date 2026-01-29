@@ -603,7 +603,7 @@ Para ficar mais claro, vamos mais uma vez utilizar o exemplo com o Nginx. Gosto 
 Bem, vamos lá, hora de criar um novo Deployment com o Nginx, vamos utilizar o exemplo que já utilizamos quando aprendemos sobre o Deployment.
 
 Para isso, crie um arquivo chamado nginx-liveness.yaml e cole o seguinte conteúdo.
-
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -638,7 +638,7 @@ spec:
           periodSeconds: 10 # A cada quantos segundos vamos executar a verificação
           timeoutSeconds: 5 # Quantos segundos vamos esperar para considerar que a verificação falhou
           failureThreshold: 3 # Quantos falhas consecutivas vamos aceitar antes de reiniciar o container
-
+```
  
 
 Com isso temos algumas coisas novas, e utilizamos apenas uma probe que é a livenessProbe.
@@ -650,7 +650,7 @@ Ficou mais claro? Vamos para mais um exemplo.
 Vamos imaginar que agora não queremos mais utilizar o tcpSocket, mas sim o httpGet para tentar acessar um endpoint dentro do nosso Pod.
 
 Para isso, vamos alterar o nosso nginx-deployment.yaml para o seguinte.
-
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -686,7 +686,7 @@ spec:
           periodSeconds: 10 # A cada quantos segundos vamos executar a verificação
           timeoutSeconds: 5 # Quantos segundos vamos esperar para considerar que a verificação falhou
           failureThreshold: 3 # Quantos falhas consecutivas vamos aceitar antes de reiniciar o container
-
+```
  
 
 Perceba que agora somente mudamos algumas coisas, apesar de seguir com o mesmo objetivo, que é verificar se o Nginx está respondendo corretamente, mudamos como iremos testar isso. Agora estamos utilizando o httpGet para testar se o Nginx está respondendo corretamente através do protocolo HTTP, e para isso, estamos utilizando o endpoint / e a porta 80.
@@ -697,33 +697,33 @@ O que temos de novo aqui é a opção path, que é o endpoint que vamos utilizar
 
 Escolha qual dois dois exemplos você quer utilizar, e crie o seu Deployment através do comando abaixo.
 
-kubectl apply -f nginx-deployment.yaml
+    kubectl apply -f nginx-deployment.yaml
 
  
 
 Para verificar se o Deployment foi criado corretamente, execute o comando abaixo.
 
-kubectl get deployments
+    kubectl get deployments
 
  
 
 Você deve ver algo parecido com isso.
 
-NAME                                READY   STATUS    RESTARTS   AGE
-nginx-deployment-7557d7fc6c-dx48d   1/1     Running   0          14s
-nginx-deployment-7557d7fc6c-tbk4w   1/1     Running   0          12s
-nginx-deployment-7557d7fc6c-wv876   1/1     Running   0          16s
+    NAME                                READY   STATUS    RESTARTS   AGE
+    nginx-deployment-7557d7fc6c-dx48d   1/1     Running   0          14s
+    nginx-deployment-7557d7fc6c-tbk4w   1/1     Running   0          12s
+    nginx-deployment-7557d7fc6c-wv876   1/1     Running   0          16s
 
  
 
 Para que você possa ver mais detalhes sobre o seu Pod e saber se a nossa probe está funcionando corretamente, vamos utilizar o comando abaixo.
 
-kubectl describe pod nginx-deployment-7557d7fc6c-dx48d
+    kubectl describe pod nginx-deployment-7557d7fc6c-dx48d
 
  
 
 A saída deve ser parecida com essa.
-
+```bash
 Name:             nginx-deployment-589d6fc888-42fmg
 Namespace:        default
 Priority:         0
@@ -785,7 +785,7 @@ Events:
   Normal  Created    15s   kubelet            Created container nginx
   Normal  Started    15s   kubelet            Started container nginx
 
- 
+``` 
 
 Aqui temos a informação mais importante para nós nesse momento:
 
@@ -840,7 +840,7 @@ spec:
 
 Vamos aplicar as alterações no nosso Deployment:
 
-kubectl apply -f deployment.yaml
+    kubectl apply -f deployment.yaml
 
  
 
@@ -850,10 +850,10 @@ Tudo isso porque a nossa livenessProbe está falhando, afinal o nosso endpoint 
 
 Podemos ver mais detalhes sobre o que está acontecendo na saída do comando kubectl describe pod:
 
-kubectl describe pod nginx-deployment-7557d7fc6c-dx48d
+    kubectl describe pod nginx-deployment-7557d7fc6c-dx48d
 
  
-
+```bash
 Name:             nginx-deployment-7557d7fc6c-dx48d
 Namespace:        default
 Priority:         0
@@ -921,7 +921,7 @@ Events:
   Normal   Killing    4s                kubelet            Container nginx failed liveness probe, will be restarted
   Normal   Started    3s (x2 over 42s)  kubelet            Started container nginx
 
- 
+``` 
 
 Na última parte da saída do comando kubectl describe pod, você pode ver que o Kubernetes está tentando executar a nossa livenessProbe e ela está falhando, inclusive ele mostra a quantidade de vezes que ele tentou executar a livenessProbe e falhou, e com isso, ele reiniciou o nosso Pod.
 
@@ -987,14 +987,14 @@ spec:
 
 Vamos ver se os nossos Pods estão rodando:
 
-kubectl get pods
+    kubectl get pods
 
- 
+    
 
-NAME                               READY   STATUS    RESTARTS   AGE
-nginx-deployment-fbdc9b65f-trnnz   0/1     Running   0          6s
-nginx-deployment-fbdc9b65f-z8n4m   0/1     Running   0          6s
-nginx-deployment-fbdc9b65f-zn8zh   0/1     Running   0          6s
+    NAME                               READY   STATUS    RESTARTS   AGE
+    nginx-deployment-fbdc9b65f-trnnz   0/1     Running   0          6s
+    nginx-deployment-fbdc9b65f-z8n4m   0/1     Running   0          6s
+    nginx-deployment-fbdc9b65f-zn8zh   0/1     Running   0          6s
 
  
 
@@ -1002,14 +1002,14 @@ Podemos ver que agora os Pods demoram um pouco mais para ficarem prontos, pois e
 
 Se você aguardar um pouco, você verá que os Pods irão ficar prontos, e você pode ver isso executando o comando:
 
-kubectl get pods
+    kubectl get pods
 
- 
+    
 
-NAME                               READY   STATUS    RESTARTS   AGE
-nginx-deployment-fbdc9b65f-trnnz   1/1     Running   0          30s
-nginx-deployment-fbdc9b65f-z8n4m   1/1     Running   0          30s
-nginx-deployment-fbdc9b65f-zn8zh   1/1     Running   0          30s
+    NAME                               READY   STATUS    RESTARTS   AGE
+    nginx-deployment-fbdc9b65f-trnnz   1/1     Running   0          30s
+    nginx-deployment-fbdc9b65f-z8n4m   1/1     Running   0          30s
+    nginx-deployment-fbdc9b65f-zn8zh   1/1     Running   0          30s
 
  
 
@@ -1017,10 +1017,10 @@ Pronto, como mágica agora os nossos Pods estão prontos para receber requisiç�
 
 Vamos dar uma olhada no describe do nosso Pod:
 
-kubectl describe pod nginx-deployment-fbdc9b65f-trnnz
+    kubectl describe pod nginx-deployment-fbdc9b65f-trnnz
 
  
-
+```bash
 Name:             nginx-deployment-fbdc9b65f-trnnz
 Namespace:        default
 Priority:         0
@@ -1081,7 +1081,7 @@ Events:
   Normal  Created    59s   kubelet            Created container nginx
   Normal  Started    59s   kubelet            Started container nginx
 
- 
+``` 
 
 Pronto, a nossa probe está lá e funcionando, e com isso podemos garantir que os nossos Pods estão prontos para receber requisições.
 
@@ -1100,33 +1100,31 @@ Vamos mudar o nosso path para /giropops e ver o que acontece:
 
  
 
-kubectl apply -f nginx-deployment.yaml
+    kubectl apply -f nginx-deployment.yaml
 
- 
-
-deployment.apps/nginx-deployment configured
+    deployment.apps/nginx-deployment configured
 
  
 
 Muito bom, agora vamos ver o resultado dessa bagunça:
 
-kubectl get pods
+    kubectl get pods
 
  
 
 Nesse ponto você pode ver que o Kubernetes está tentando realizar a atualização do nosso Deployment, mas não está conseguindo, pois no primeiro Pod que ele tentou atualizar, a probe falhou.
 
-NAME                                READY   STATUS    RESTARTS   AGE
-nginx-deployment-5fd6c688d8-kjf8d   0/1     Running   0          93s
-nginx-deployment-fbdc9b65f-trnnz    1/1     Running   0          9m21s
-nginx-deployment-fbdc9b65f-z8n4m    1/1     Running   0          9m21s
-nginx-deployment-fbdc9b65f-zn8zh    1/1     Running   0          9m21s
+    NAME                                READY   STATUS    RESTARTS   AGE
+    nginx-deployment-5fd6c688d8-kjf8d   0/1     Running   0          93s
+    nginx-deployment-fbdc9b65f-trnnz    1/1     Running   0          9m21s
+    nginx-deployment-fbdc9b65f-z8n4m    1/1     Running   0          9m21s
+    nginx-deployment-fbdc9b65f-zn8zh    1/1     Running   0          9m21s
 
  
 
 Vamos ver o nosso rollout:
 
-kubectl rollout status deployment/nginx-deployment
+    kubectl rollout status deployment/nginx-deployment
 
  
 
@@ -1138,10 +1136,10 @@ Mesmo depois de algum tempo o nosso rollout não terminou, ele continua esperand
 
 Podemos ver os detalhes do Pod que está com problema:
 
-kubectl describe pod nginx-deployment-5fd6c688d8-kjf8d
+    kubectl describe pod nginx-deployment-5fd6c688d8-kjf8d
 
  
-
+```bash
 Events:
   Type     Reason     Age                   From               Message
   ----     ------     ----                  ----               -------
@@ -1150,7 +1148,7 @@ Events:
   Normal   Created    4m3s                  kubelet            Created container nginx
   Normal   Started    4m3s                  kubelet            Started container nginx
   Warning  Unhealthy  34s (x22 over 3m44s)  kubelet            Readiness probe failed: HTTP probe failed with statuscode: 404
-
+```
  
 
 Eu somente colei a parte final da saída, que é a parte mais interessante para esse momento. É nessa parte que podemos ver que o nosso Pod não está saudável, e por isso o Kubernetes não está conseguindo atualizar o nosso Deployment.
@@ -1164,7 +1162,7 @@ Ela é a responsável por verificar se o nosso container foi inicializado corret
 Ele é muito parecido com a readinessProbe, mas a diferença é que a startupProbe é executada apenas uma vez no começo da vida do nosso container, e a readinessProbe é executada de tempos em tempos.
 
 Para entender melhor, vamos ver um exemplo criando um arquivo chamado nginx-startup.yaml:
-
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1201,7 +1199,7 @@ spec:
           timeoutSeconds: 5 # O tempo que iremos esperar para considerar que a probe falhou
           successThreshold: 2 # O número de vezes que a probe precisa passar para considerar que o container está pronto
           failureThreshold: 3 # O número de vezes que a probe precisa falhar para considerar que o container não está pronto
-
+```
  
 
 Agora vamos aplicar a nossa configuração:
@@ -1263,7 +1261,7 @@ E você verá algo parecido com isso:
 ##  Exemplo com todas as probes
 
 Vamos para o nosso exemplo final de hoje, vamos utilizar todas as probes que vimos até aqui, e vamos criar um arquivo chamado nginx-todas-probes.yaml:
-
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1319,12 +1317,12 @@ spec:
           timeoutSeconds: 5 # O tempo que iremos esperar para considerar que a probe falhou
           successThreshold: 1 # O número de vezes que a probe precisa passar para considerar que o container está pronto
           failureThreshold: 3 # O número de vezes que a probe precisa falhar para considerar que o container não está pronto
-
+```
  
 
 Pronto, estamos utilizando as três probes, vamos aplicar:
 
-kubectl apply -f nginx-todas-probes.yaml
+    kubectl apply -f nginx-todas-probes.yaml
 
  
 
