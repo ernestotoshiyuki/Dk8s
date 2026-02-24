@@ -1,0 +1,46 @@
+# precisa subir o girpops-senhas-deployment.yaml e o locust.yaml antes de aplicar esse HPA (desafio)
+apiVersion: autoscaling/v2  # Versão da API que define um HPA
+kind: HorizontalPodAutoscaler  # Tipo de recurso que estamos definindo
+metadata:
+  name: giropops-senhas-hpa  # Nome do nosso HPA
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1        # A versão da API do recurso alvo
+    kind: Deployment           # O tipo de recurso alvo
+    name: giropops-senhas     # O nome do recurso alvo
+  minReplicas: 3               # Número mínimo de réplicas
+  maxReplicas: 10              # Número máximo de réplicas
+  metrics:
+  - type: Resource             # Tipo de métrica (recurso do sistema)
+    resource:
+      name: cpu                # Nome da métrica (CPU neste caso)
+      target:
+        type: Utilization      # Tipo de alvo (utilização)
+        averageUtilization: 50 # Valor alvo (50% de utilização)
+  - type: Resource             # Tipo de métrica (recurso do sistema)
+    resource:
+      name: memory                # Nome da métrica (memory neste caso)
+      target:
+        type: Utilization      # Tipo de alvo (utilização)
+        averageUtilization: 50 # Valor alvo (50% de utilização)
+  - type: ContainerResource             # Tipo de métrica (recurso do sistema)
+    containerResource:
+      name: cpu                # Nome da métrica (CPU neste caso)
+      container: giropops-senhas     # Nome do container dentro do pod
+      target:
+        type: Utilization      # Tipo de alvo (utilização)
+        averageUtilization: 50 # Valor alvo (50% de utilização)
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 5 # Tempo de estabilização para escalonamento para cima (5 segundos)
+      policies:
+      - type: Percent              # Tipo de política (percentual)
+        value: 100                 # Valor da política (100% de aumento)
+        periodSeconds: 10         # Período de tempo para aplicar a política (10 segundos)
+    scaleDown:
+      stabilizationWindowSeconds: 60 # Tempo de estabilização para escalonamento para baixo ( 60 segundos)
+      policies: 
+      - type: Percent              # Tipo de política (percentual)
+        value: 100                 # Valor da política (100% de redução)
+        periodSeconds: 10         # Período de tempo para aplicar a política (10 segundos)
+    
