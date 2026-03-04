@@ -1,0 +1,17 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-label-namespace 
+spec:
+  rules:
+    - name: add-label-namespace
+      match:
+        resources:
+          kinds:              
+            - Namespace             # Aplica a namespaces
+            - Pod                   # Aplica a Pods
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              product: "XPTO"       # Adiciona o rótulo "product: XPTO" a todos os namespaces e Pod
