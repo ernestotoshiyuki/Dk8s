@@ -1,0 +1,19 @@
+# outro exemplo de affinity com um Pod para rodar apenas em nodes com a label "disktype=ssd"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ssd-pod
+spec:
+  # Configure a nodeAffinity aqui
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: disktype
+            operator: "In"
+            values: 
+            - "ssd"
+  containers:
+  - name: app
+    image: nginx:1.26

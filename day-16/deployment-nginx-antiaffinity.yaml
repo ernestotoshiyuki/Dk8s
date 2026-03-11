@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:    # labelSelector é usado para selecionar os pods que devem ser evitados
+              matchLabels:
+                app: nginx
+            topologyKey: "region"  # aqui o pod será agendado em somente 1 pod por região, ou seja, se houvesse 2 regions, definidos na labels do node, os pods do nginx seriam agendados em somente 1 pod por região, evitando que os pods do nginx sejam agendados no mesmo node, aumentando a disponibilidade da aplicação
+

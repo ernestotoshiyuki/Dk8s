@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:  # com preferred ele tenta agendar os pods do nginx em nodes que não tenham outros pods do nginx, mas caso não seja possível, ele pode agendar os pods do nginx em nodes que já tenham outros pods do nginx, ou seja, ele tenta evitar ao máximo que os pods do nginx sejam agendados no mesmo node, aumentando a disponibilidade da aplicação
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: nginx
+              topologyKey: "region"  # aqui o pod será agendado preferencialmente em nodes que tenham pods do nginx, ou seja, se houvesse 2 regions, definidos na labels do node, os pods do nginx seriam agendados preferencialmente em nodes que já tenham pods do nginx, aumentando a disponibilidade da aplicação
+            

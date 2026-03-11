@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "region"   # criado um label "region" com o valor "sa-east-1" no node com kubectl label nodes <nome-do-node> region=sa-east-1
+                operator: "In"
+                values:
+                - "sa-east-1"
+
+# dessa forma, os pods do nginx só serão agendados em nodes que tenham o label "region" com o valor "sa-east-1"
